@@ -46,18 +46,24 @@ void polyMul(struct term *polynomial1,struct term *polynomial2,struct term **pro
         for(poly2=polynomial2;poly2!=NULL;poly2=poly2->link){
             newNode=(struct term *)malloc(sizeof(struct term));
             newNode->link=NULL;
-            if(*product==NULL)
-                *product =newNode;
             newNode->exp=poly1->exp+poly2->exp;
             newNode->coef=poly1->coef*poly2->coef;
-            for(ptr=*product;ptr!=NULL;ptr=ptr->link){
-                if(ptr->exp==newNode->exp){
-                    ptr->coef=ptr->coef+newNode->coef;
-                    break;
-                }
-                else if(ptr->link==NULL&&ptr->exp!=newNode->exp){
-                    ptr->link=newNode;
-                    break;
+            if(*product==NULL)
+                *product =newNode;
+            else{
+                ptr=*product;
+                while(ptr!=NULL){
+                    if(ptr->exp==newNode->exp){
+                        ptr->coef=ptr->coef+newNode->coef;
+                        free(newNode);
+                        newNode=NULL;
+                        break;
+                    }
+                    else if(ptr->link==NULL&&ptr->exp!=newNode->exp){
+                        ptr->link=newNode;
+                        break;
+                    }
+                    ptr=ptr->link;
                 }
             }
         }
@@ -72,9 +78,11 @@ void main(){
     polynomialRead(&poly1);
     printf("Enter the details of polynomial Two \n");
     polynomialRead(&poly2);
+    printf("Polynomial one : ");
     polynomialPrint(poly1);
+    printf("Polynomial two : ");
     polynomialPrint(poly2);
     polyMul(poly1,poly2,&product);
-    printf("Result is \n");
+    printf("Result is      : ");
     polynomialPrint(product);
 }
